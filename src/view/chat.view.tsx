@@ -50,15 +50,17 @@ export const ChatView = () => {
  const [chat, setChat] = useState<ChatDto>(chatOnInitialize);
 
  const updateChatWithApiReply = useCallback(async (localChat: ChatDto) => {
-  const chatApiBaseUrl =
-   "https://afed-2604-3d09-6280-1abf-f932-ab92-83e4-d237.ngrok.io";
+  const chatApiBaseUrl = process.env.CHAT_GPT_NGROK_BASE_URL;
   const chatClient = new ChatClient(chatApiBaseUrl);
   
+
+
   try {
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
     const newChat = await chatClient.respondTo(localChat);
     setChat(newChat);
   } catch (err) {
-    console.log('0------ ERORR')
     throw new Error('Error responding:' , err)
   }
  }, [chat]);
@@ -67,7 +69,7 @@ export const ChatView = () => {
   const newChat = { messages: [...chat.messages, message] };
   setChat(newChat);
   return newChat;
- }, []);
+ }, [setChat]);
 
  const handleSendPress = useCallback(async (message: MessageType.PartialText) => {
   const newMessage: ChatMessageDto = {
